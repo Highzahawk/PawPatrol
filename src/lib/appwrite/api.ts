@@ -21,7 +21,7 @@ export async function createUserAccount(user: INewUser) {
             name: newAccount.name,
             email: newAccount.email,
             username: user.username,
-            imageUrl: avatarUrl as unknown as string,
+            imageUrl: avatarUrl,
         });
 
         return newUser;
