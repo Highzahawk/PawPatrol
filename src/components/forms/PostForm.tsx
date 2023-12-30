@@ -35,15 +35,15 @@ const PostForm = () => {
     return(
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8">
+            className="flex flex-col gap-9 w-full max-w-5xl">
                 <FormField
                     control={form.control}
-                    name="username"
+                    name="caption"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel className="shad-form_label">Caption</FormLabel>
                             <FormControl>
-                                <Input placeholder="shadcn" {...field} />
+                                <Textarea placeholder="shadcn" {...field} />
                             </FormControl>
                             <FormDescription>
                                 This is your public display name.
