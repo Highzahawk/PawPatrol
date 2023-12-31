@@ -1,8 +1,7 @@
-import { AppwriteException, ID, Query } from 'appwrite';
+import { ID, Query } from 'appwrite';
 
 import { INewPost, INewUser, IUpdatePost } from "@/types";
 import { account, appWriteConfig, avatars, databases, storage } from './config';
-import errorMap from 'zod/locales/en.js';
 
 export async function createUserAccount(user: INewUser) {
     try {
@@ -362,7 +361,7 @@ export async function searchposts(searchTerm: string) {
 
         if(!posts) throw Error;
 
-        return posts;
+        return posts as unknown;
     } catch (error) {
         console.log(error);
     }
