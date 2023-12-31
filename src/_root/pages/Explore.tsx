@@ -4,14 +4,20 @@ import Loader from "@/components/shared/Loader";
 import SearchResults from "@/components/shared/SearchResults";
 import { Input } from "@/components/ui/input"
 import { useGetPosts, useSearchPosts } from "@/lib/react-query/queriesAndMutations";
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useInView } from 'react-intersection-observer'
 
 const Explore = () => {
+    const { ref, inView } = useInView();
     const { data: posts, fetchNextPage, hasNextPage } = useGetPosts();
 
     const [searchValue, setSearchValue] = useState('')
     const debouncedValue = useDebounce(searchValue, 500);
-    const{ data: searchedPosts, isFethcing: isSearchFetching } = useSearchPosts(debouncedValue)
+    const{ data: searchedPosts, isFetching: isSearchFetching } = useSearchPosts(debouncedValue)
+
+    useEffect(() => {
+        if(inView && !searchValue) fetchNextPage();
+    }, [inView, searchValue])
 
     if(!posts) {
         return (
@@ -30,7 +36,7 @@ const Explore = () => {
                 <h2 className="h3-bold md:h2-bold w-full">Search Posts</h2>
                 <div className="flex gap-1 px-4 w-full rounded-lg bg-dark-4">
                     <img
-                        src="/assets/icons/serach.svg"
+                        src="/assets/icons/search.svg"
                         width={24}
                         height={24}
                         about="search"
@@ -39,7 +45,7 @@ const Explore = () => {
                         type="text"
                         placeholder='Search'
                         className="explore-search"
-                        value="search"
+                        value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}
                     />
                 </div>
@@ -62,7 +68,7 @@ const Explore = () => {
             <div className="flex flex-wrap gap-9 w-full max-w-5xl">
                 {shouldShowSearchResults ? (
                     <SearchResults
-                        isSearchFethcing={isSearchFetching}
+                        isSearchFetching={isSearchFetching}
                         searchedPosts={searchedPosts}
                     />
                 ) : shouldShowPosts ? (
@@ -71,6 +77,12 @@ const Explore = () => {
                     <GridPostList key={`page-${index}`} posts={item.documents} />
                 ))}
             </div>
+
+            {hasNextPage && !searchValue && (
+                <div ref={ref} className="mt-10">
+                    <Loader />
+                </div>
+            )}
         </div>
     )
 }
